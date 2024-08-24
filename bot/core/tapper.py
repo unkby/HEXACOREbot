@@ -1,7 +1,7 @@
 import asyncio
 import time
 from urllib.parse import unquote
-
+import random  # Добавляем импорт random для генерации случайных задержек
 import aiohttp
 import json
 from aiocfscrape import CloudflareScraper
@@ -641,10 +641,10 @@ class Tapper:
 
                 if settings.PLAY_HURTMEPLEASE_GAME:
                     await self.play_game_6(http_client=http_client)
-
-                logger.info(f"<light-yellow>{self.session_name}</light-yellow> | Going sleep 1 hour")
-
-                await asyncio.sleep(3600)
+                delaysleep = random.randrange(3600, 10000)
+                delayprint = round(delaysleep / 3600 , 2)
+                logger.info(f"<light-yellow>{self.session_name}</light-yellow> | Going sleep {delayprint:.2f} hour")
+                await asyncio.sleep(delaysleep)  # Ожидание
 
             except InvalidSession as error:
                 raise error
@@ -656,6 +656,12 @@ class Tapper:
 
 
 async def run_tapper(tg_client: Client, proxy: str | None):
+    # Генерируем случайную задержку от 1 до 100 секунд перед запуском сессии
+    delay1 = random.randrange(1, 10)
+    delay2 = random.randrange(50, 667, 50)
+    delay = delay1 * 5 + delay2
+    logger.info(f"<light-yellow> {delay:.2f} секунд</light-yellow>")
+    await asyncio.sleep(delay)  # Ожидание
     try:
         await Tapper(tg_client=tg_client).run(proxy=proxy)
     except InvalidSession:
